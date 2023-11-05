@@ -8,6 +8,7 @@
 MPU6050 accelgyro;
 
 int16_t ax, ay, az;
+int16_t avgx =0, avgy =0, avgz = 0;
 
 void setup() {
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -21,11 +22,11 @@ void setup() {
 }
 
 void loop() {
-    // accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-    // Serial.print("ax:"); Serial.print(ax);
-    // Serial.print(",ay:"); Serial.print(ay);
-    // Serial.print(",az:"); Serial.print(az);
-    // Serial.println("");
+    accelgyro.getAcceleration(&ax, &ay, &az);
+    Serial.print("ax:"); Serial.print(ax-avgx);
+    Serial.print(",ay:"); Serial.print(ay-avgy);
+    Serial.print(",az:"); Serial.print(az-avgz);
+    Serial.println("");
 }
 
 void initializeAccel() {
@@ -43,15 +44,24 @@ void initializeAccel() {
 }
 
 void calibrate() {
-  Serial.println("Calibration procedure");
-  Serial.println("Offsets before calibration:");
-  accelgyro.PrintActiveOffsets();
-
   Serial.print("\nCalibrating...");
-  accelgyro.CalibrateAccel(5);
-  
-  Serial.println("\nOffsets after calibration");
-  accelgyro.PrintActiveOffsets();
+  long x,y,z;
+
+  for(uint8_t i=0;i<255;i++) {
+    accelgyro.getAcceleration(&ax, &ay, &az);
+    x=(x*i + ax)/(i+1);
+    y=(y*i + ay)/(i+1);
+    z=(z*i + az)/(i+1);
+  }
+
+  avgx = x;
+  avgy = y;
+  avgz = z;
+
+  Serial.print("avgx:"); Serial.print(avgx);
+  Serial.print(",avgy:"); Serial.print(avgy);
+  Serial.print(",avgz:"); Serial.print(avgz);
+  Serial.println("");
   
   Serial.println("\nCalibration complete!");
 }
