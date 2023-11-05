@@ -6,7 +6,7 @@
 #endif
 
 MPU6050 accelgyro;
-
+uint8_t redbtn = D5, yellowbtn = D6, greenbtn = D7;
 int16_t ax, ay, az;
 int16_t avgx =0, avgy =0, avgz = 0;
 
@@ -18,15 +18,17 @@ void setup() {
     #endif
 
     Serial.begin(38400);
+    initializeInput();
     initializeAccel();
 }
 
 void loop() {
-    accelgyro.getAcceleration(&ax, &ay, &az);
-    Serial.print("ax:"); Serial.print(ax-avgx);
-    Serial.print(",ay:"); Serial.print(ay-avgy);
-    Serial.print(",az:"); Serial.print(az-avgz);
-    Serial.println("");
+    if(digitalRead(redbtn) == 0) {
+      calibrate();
+    }
+    if (digitalRead(greenbtn) == 0) {
+      measure();
+    }
 }
 
 void initializeAccel() {
@@ -41,6 +43,12 @@ void initializeAccel() {
   else {
     Serial.println("MPU6050 connection failed");
   }
+}
+
+void initializeInput() {
+  pinMode(redbtn, INPUT_PULLUP);
+  pinMode(yellowbtn, INPUT_PULLUP);
+  pinMode(greenbtn, INPUT_PULLUP);
 }
 
 void calibrate() {
@@ -64,4 +72,12 @@ void calibrate() {
   Serial.println("");
   
   Serial.println("\nCalibration complete!");
+}
+
+void measure() {
+    accelgyro.getAcceleration(&ax, &ay, &az);
+    Serial.print("ax:"); Serial.print(ax-avgx);
+    Serial.print(",ay:"); Serial.print(ay-avgy);
+    Serial.print(",az:"); Serial.print(az-avgz);
+    Serial.println("");
 }
