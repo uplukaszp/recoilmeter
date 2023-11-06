@@ -6,7 +6,7 @@
 #endif
 
 MPU6050 accelgyro;
-uint8_t redbtn = D5, yellowbtn = D6, greenbtn = D7;
+uint8_t yellowbtn = D4, greenbtn = D3;
 int16_t ax, ay, az;
 int16_t avgx =0, avgy =0, avgz = 0;
 
@@ -23,7 +23,7 @@ void setup() {
 }
 
 void loop() {
-    if(digitalRead(redbtn) == 0) {
+    if(digitalRead(yellowbtn) == 0) {
       calibrate();
     }
     if (digitalRead(greenbtn) == 0) {
@@ -46,7 +46,6 @@ void initializeAccel() {
 }
 
 void initializeInput() {
-  pinMode(redbtn, INPUT_PULLUP);
   pinMode(yellowbtn, INPUT_PULLUP);
   pinMode(greenbtn, INPUT_PULLUP);
 }

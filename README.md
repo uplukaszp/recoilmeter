@@ -16,6 +16,5 @@ SCL		- 	D1 (SCL)
 ## keyboard
 keyboard	-	ESP12E
 1			-	GND
-2			-	D5
-3			-	D6
-4			-	D7 
+2			-	D4
+3			-	D3 
