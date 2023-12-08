@@ -27,3 +27,9 @@ CS      - D8
 MOSI    - D7
 SCK     - D5
 MISO    - D6
+
+## buzzer
+buzzer  - ESP12E
+-       - GND
++       - 3V
+OUT     - D0
