@@ -5,8 +5,20 @@ SDWriter::SDWriter() {
 
 void SDWriter::init() {
   if (!sd.begin(CHIPSELECT, SD_SCK_MHZ(50))) {
+    tone(D0, 500);
+    delay(100);
+    noTone(D0);
+    delay(100);
+    tone(D0, 500);
+    delay(100);
+    noTone(D0);
+
     sd.initErrorHalt();
   }
+  tone(D0, 1000);
+  delay(500);
+  noTone(D0);
+  delay(500);
 }
 
 void SDWriter::initFile() {
@@ -23,6 +35,12 @@ void SDWriter::initFile() {
       fileName[BASE_NAME_SIZE]++;
     } else {
       sd.errorHalt("Can't create file name");
+      tone(D0, 500);
+      delay(100);
+      noTone(D0);
+      delay(100);
+      tone(D0, 500);
+      delay(100);
     }
   }
   if (!file.open(fileName, O_WRONLY | O_CREAT | O_EXCL)) {
@@ -49,7 +67,21 @@ void SDWriter::writeData(unsigned long timestamp, int16_t ax, int16_t ay, int16_
 void SDWriter::closeFile() {
   if (!file.sync() || file.getWriteError()) {
     sd.errorHalt("write error");
+    tone(D0, 500);
+    delay(100);
+    noTone(D0);
+    delay(100);
+    tone(D0, 500);
+    delay(100);
   }
   file.close();
   Serial.println(F("Save done"));
+  delay(500);
+  tone(D0, 1000);
+  delay(500);
+  noTone(D0);
+  delay(500);
+  tone(D0, 1000);
+  delay(500);
+  noTone(D0);
 }

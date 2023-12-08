@@ -12,6 +12,10 @@ SDWriter writer;
 uint8_t yellowbtn = D4, greenbtn = D3;
 int16_t ax, ay, az;
 int16_t avgx = 0, avgy = 0, avgz = 0;
+uint16_t axarr[5000];
+uint16_t ayarr[5000];
+uint16_t azarr[5000];
+uint16_t timearr[5000];
 
 void setup() {
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -45,9 +49,22 @@ void initializeAccel() {
   Serial.println("Testing device connections...");
   if (accelgyro.testConnection()) {
     Serial.println("MPU6050 connection successful");
+    tone(D0, 1000);
+    delay(500);
+    noTone(D0);
+    delay(500);
+
     calibrate();
   } else {
+    tone(D0, 500);
+    delay(100);
+    noTone(D0);
+    delay(100);
+    tone(D0, 500);
+    delay(100);
+    noTone(D0);
     Serial.println("MPU6050 connection failed");
+    SysCall::halt();
   }
 }
 
@@ -80,6 +97,10 @@ void calibrate() {
   Serial.println("");
 
   Serial.println("\nCalibration complete!");
+  tone(D0, 1000);
+  delay(500);
+  noTone(D0);
+  delay(500);
 }
 
 void initializeWriter() {
@@ -88,10 +109,10 @@ void initializeWriter() {
 
 void measure() {
   unsigned long t0 = micros();
-  uint16_t axarr[5000];
-  uint16_t ayarr[5000];
-  uint16_t azarr[5000];
-  uint16_t timearr[5000];
+  tone(D0, 1000);
+  delay(500);
+  noTone(D0);
+  delay(500);
   for (uint16_t i = 0; i < 5000; i++) {
     accelgyro.getAcceleration(&ax, &ay, &az);
     axarr[i] = ax;
