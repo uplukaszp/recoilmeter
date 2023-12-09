@@ -102,7 +102,6 @@ void measure() {
     ayarr[i] = ay;
     azarr[i] = az;
     timearr[i] = micros() - t0;
-    writer.writeData(micros() - t0, ax - avgx, ay - avgy, az - avgz);
   }
 
   Serial.print("saving...");
