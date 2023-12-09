@@ -43,29 +43,9 @@ void loop() {
 }
 
 void initializeAccel() {
-  Serial.println("Initializing I2C devices...");
+  Serial.println(F("Initializing I2C devices..."));
   accelgyro.initialize();
-
-  Serial.println("Testing device connections...");
-  if (accelgyro.testConnection()) {
-    Serial.println("MPU6050 connection successful");
-    tone(D0, 1000);
-    delay(500);
-    noTone(D0);
-    delay(500);
-
-    calibrate();
-  } else {
-    tone(D0, 500);
-    delay(100);
-    noTone(D0);
-    delay(100);
-    tone(D0, 500);
-    delay(100);
-    noTone(D0);
-    Serial.println("MPU6050 connection failed");
-    SysCall::halt();
-  }
+  calibrate();
 }
 
 void initializeInput() {
@@ -74,9 +54,9 @@ void initializeInput() {
 }
 
 void calibrate() {
-  Serial.print("\nCalibrating...");
+  Serial.println(F("Calibrating..."));
   long x, y, z;
-
+  testAccelConnection();
   for (uint8_t i = 0; i < 255; i++) {
     accelgyro.getAcceleration(&ax, &ay, &az);
     x = (x * i + ax) / (i + 1);
@@ -96,7 +76,7 @@ void calibrate() {
   Serial.print(avgz);
   Serial.println("");
 
-  Serial.println("\nCalibration complete!");
+  Serial.println(F("Calibration complete!"));
   tone(D0, 1000);
   delay(500);
   noTone(D0);
@@ -108,11 +88,14 @@ void initializeWriter() {
 }
 
 void measure() {
+  Serial.println(F("Measuring..."));
   unsigned long t0 = micros();
   tone(D0, 1000);
   delay(500);
   noTone(D0);
   delay(500);
+  testAccelConnection();
+
   for (uint16_t i = 0; i < 5000; i++) {
     accelgyro.getAcceleration(&ax, &ay, &az);
     axarr[i] = ax;
@@ -122,9 +105,32 @@ void measure() {
     writer.writeData(micros() - t0, ax - avgx, ay - avgy, az - avgz);
   }
 
+  Serial.print("saving...");
   for (uint16_t i = 0; i < 5000; i++) {
     writer.writeData(timearr[i], axarr[i] - avgx, ayarr[i] - avgy, azarr[i] - avgz);
   }
-  Serial.println("measure time:");
-  Serial.print(micros() - t0);
+  Serial.print(F("Measure data writting time: "));
+  Serial.println(micros() - t0);
+}
+
+void testAccelConnection() {
+  Serial.println("Testing device connections...");
+  if (accelgyro.testConnection()) {
+    Serial.println("MPU6050 connection successful");
+    tone(D0, 1000);
+    delay(500);
+    noTone(D0);
+    delay(500);
+
+  } else {
+    tone(D0, 500);
+    delay(100);
+    noTone(D0);
+    delay(100);
+    tone(D0, 500);
+    delay(100);
+    noTone(D0);
+    Serial.println("MPU6050 connection failed");
+    SysCall::halt();
+  }
 }

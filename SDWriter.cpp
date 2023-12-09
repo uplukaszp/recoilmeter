@@ -15,6 +15,7 @@ void SDWriter::init() {
 
     sd.initErrorHalt();
   }
+  Serial.println(F("SD card init complete"));
   tone(D0, 1000);
   delay(500);
   noTone(D0);
